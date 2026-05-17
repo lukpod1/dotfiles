@@ -9,6 +9,9 @@ require() {
 
 require stow "apt install stow  /  brew install stow"
 
+echo "→ Linkando configuração do vim..."
+stow --dir="$DOTFILES" --target="$HOME" --restow vim
+
 echo "→ Linkando configuração do tmux..."
 stow --dir="$DOTFILES" --target="$HOME" --restow tmux
 
