@@ -51,7 +51,9 @@ main() {
   output=$(python3 "$current_dir/claude_parse.py" format-output "$CACHE_FILE")
   pct_num=$(echo "$output" | grep -oP '^\d+' 2>/dev/null || echo "")
 
-  if [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 80 ]]; then
+  if [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 90 ]]; then
+    echo "#[fg=#f8f8f2,bg=#ff5555]${label} ${output}"
+  elif [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 80 ]]; then
     echo "#[fg=#282a36,bg=#f1fa8c]${label} ${output}"
   else
     echo "${label} ${output}"
