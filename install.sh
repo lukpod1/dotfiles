@@ -18,11 +18,19 @@ stow --dir="$DOTFILES" --target="$HOME" --restow tmux
 DRACULA="$HOME/.tmux/plugins/tmux/scripts"
 if [[ -d "$DRACULA" ]]; then
   echo "→ Linkando scripts do Dracula..."
-  ln -sf "$DOTFILES/tmux/scripts/claude_usage.sh" "$DRACULA/claude_usage.sh"
+  ln -sf "$DOTFILES/tmux/scripts/claude_usage.sh"  "$DRACULA/claude_usage.sh"
+  ln -sf "$DOTFILES/tmux/scripts/claude_weekly.sh" "$DRACULA/claude_weekly.sh"
   ln -sf "$DOTFILES/tmux/scripts/claude_parse.py"  "$DRACULA/claude_parse.py"
 else
   echo "⚠  Plugin Dracula não encontrado em $DRACULA"
   echo "   Instale os plugins do TPM primeiro (prefix + I) e execute este script novamente."
+fi
+
+WIN_HOME="/mnt/c/Users/$(cmd.exe /c 'echo %USERNAME%' 2>/dev/null | tr -d '\r')"
+if [[ -d "$WIN_HOME" ]]; then
+  echo "→ Copiando .wslconfig para o Windows..."
+  cp -f "$DOTFILES/wsl/.wslconfig" "$WIN_HOME/.wslconfig"
+  echo "   ⚠  Reinicie o WSL para aplicar: wsl --shutdown"
 fi
 
 echo "✔ Pronto."
