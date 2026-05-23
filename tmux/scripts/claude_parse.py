@@ -74,11 +74,36 @@ def cmd_format_output(cache_file: str) -> None:
         print("--")
 
 
+def cmd_format_output_7d(cache_file: str) -> None:
+    try:
+        d = json.load(open(cache_file))
+        util  = d.get("util_7d")
+        reset = d.get("reset_7d")
+
+        if util is None:
+            print("--")
+            return
+
+        remaining_s = max(0, reset - int(time.time())) if reset else 0
+        h = remaining_s // 3600
+        if h >= 24:
+            days = h // 24
+            hh = h % 24
+            tstr = f"~{days}d{hh:02d}h"
+        else:
+            m = (remaining_s % 3600) // 60
+            tstr = f"~{h}h{m:02d}m"
+        print(f"{util}% {tstr}")
+    except Exception:
+        print("--")
+
+
 COMMANDS = {
-    "read-token":    (cmd_read_token,    1),
-    "refresh-cache": (cmd_refresh_cache, 2),
-    "cache-ts":      (cmd_cache_ts,      1),
-    "format-output": (cmd_format_output, 1),
+    "read-token":       (cmd_read_token,       1),
+    "refresh-cache":    (cmd_refresh_cache,    2),
+    "cache-ts":         (cmd_cache_ts,         1),
+    "format-output":    (cmd_format_output,    1),
+    "format-output-7d": (cmd_format_output_7d, 1),
 }
 
 if __name__ == "__main__":
