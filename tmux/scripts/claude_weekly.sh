@@ -27,8 +27,8 @@ main() {
 
   if [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 90 ]]; then
     echo "#[fg=#f8f8f2,bg=#ff5555]${label} ${output}"
-  elif [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 80 ]]; then
-    echo "#[fg=#282a36,bg=#f1fa8c]${label} ${output}"
+  elif [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 75 ]]; then
+    echo "#[fg=#282a36,bg=#ffb86c]${label} ${output}"
   else
     echo "${label} ${output}"
   fi

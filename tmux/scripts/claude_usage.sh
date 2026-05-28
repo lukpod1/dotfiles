@@ -37,7 +37,7 @@ refresh_cache() {
 }
 
 main() {
-  local RATE label now cache_ts output pct_num
+  local RATE label now cache_ts next_s refresh_str output pct_num
   RATE=$(get_tmux_option "@dracula-refresh-rate" 5)
   label=$(get_tmux_option "@dracula-claude-usage-label" "Claude")
 
@@ -46,17 +46,22 @@ main() {
 
   if [[ $((now - cache_ts)) -ge $CACHE_TTL ]]; then
     refresh_cache
+    cache_ts=$(date +%s)
   fi
+
+  next_s=$(( cache_ts + CACHE_TTL - now ))
+  [[ $next_s -lt 0 ]] && next_s=0
+  refresh_str="↻$(( next_s / 60 ))m$(( next_s % 60 ))s"
 
   output=$(python3 "$current_dir/claude_parse.py" format-output "$CACHE_FILE")
   pct_num=$(echo "$output" | grep -oP '^\d+' 2>/dev/null || echo "")
 
   if [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 90 ]]; then
-    echo "#[fg=#f8f8f2,bg=#ff5555]${label} ${output}"
-  elif [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 80 ]]; then
-    echo "#[fg=#282a36,bg=#f1fa8c]${label} ${output}"
+    echo "#[fg=#f8f8f2,bg=#ff5555]${label} ${output} ${refresh_str}"
+  elif [[ -n "$pct_num" ]] && [[ "$pct_num" -ge 75 ]]; then
+    echo "#[fg=#282a36,bg=#ffb86c]${label} ${output} ${refresh_str}"
   else
-    echo "${label} ${output}"
+    echo "${label} ${output} ${refresh_str}"
   fi
 
   sleep "$RATE"
