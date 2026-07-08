@@ -15,6 +15,11 @@ stow --dir="$DOTFILES" --target="$HOME" --restow vim
 echo "→ Linkando configuração do tmux..."
 stow --dir="$DOTFILES" --target="$HOME" --restow tmux
 
+if [[ -f "$HOME/.zshrc" && ! -L "$HOME/.zshrc" ]]; then
+  echo "→ Fazendo backup do .zshrc existente para .zshrc.pre-dotfiles.bak..."
+  mv "$HOME/.zshrc" "$HOME/.zshrc.pre-dotfiles.bak"
+fi
+
 echo "→ Linkando configuração do zsh..."
 stow --dir="$DOTFILES" --target="$HOME" --restow zsh
 
