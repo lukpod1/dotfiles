@@ -15,6 +15,9 @@ stow --dir="$DOTFILES" --target="$HOME" --restow vim
 echo "→ Linkando configuração do tmux..."
 stow --dir="$DOTFILES" --target="$HOME" --restow tmux
 
+echo "→ Linkando configuração do zsh..."
+stow --dir="$DOTFILES" --target="$HOME" --restow zsh
+
 DRACULA="$HOME/.tmux/plugins/tmux/scripts"
 if [[ -d "$DRACULA" ]]; then
   echo "→ Linkando scripts do Dracula..."
