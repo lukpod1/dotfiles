@@ -70,7 +70,7 @@ ZSH_THEME="dracula"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git)
 
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
@@ -172,7 +172,7 @@ export PATH="$HOME/bin:$PATH"
 
 
 # Vite+ bin (https://viteplus.dev)
-. "$HOME/.vite-plus/env"
+[ -s "$HOME/.vite-plus/env" ] && . "$HOME/.vite-plus/env"
 
 # claude
 export PATH="$HOME/.claude/bin:$PATH"
