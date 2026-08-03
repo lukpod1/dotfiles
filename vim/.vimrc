@@ -13,7 +13,7 @@ set number                    " Números de linha
 set relativenumber            " Números relativos (ótimo para navegação)
 set cursorline                " Destaca a linha atual
 set showcmd                   " Mostra comando parcial no rodapé
-set showmode                  " Mostra modo atual (INSERT, VISUAL, etc)
+set noshowmode                " A lightline já mostra o modo; evita duplicar
 set wildmenu                  " Menu de autocompletar na linha de comando
 set laststatus=2              " Sempre mostrar a barra de status
 set scrolloff=8               " Mantém 8 linhas de contexto ao rolar
@@ -38,9 +38,18 @@ set autoindent                " Mantém indentação da linha anterior
 syntax on                     " Habilita syntax highlighting
 set background=dark           " Fundo escuro
 
+" Truecolor. Dentro do tmux o vim não detecta os escapes sozinho
+" (t_8f/t_8b vêm vazios), então precisam ser declarados na mão.
+if has('termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    set termguicolors
+endif
+
 " --- PERFORMANCE ---
 set lazyredraw                " Não redesenha durante macros
 set ttyfast                   " Transmissão mais rápida no terminal
+set updatetime=100            " Sinais do gitgutter em 100ms (default: 4000)
 
 " --- ARQUIVOS E BACKUP ---
 set noswapfile                " Sem arquivos .swp
@@ -53,7 +62,14 @@ set splitbelow                " Novo split abre abaixo
 set splitright                " Novo split abre à direita
 
 " --- CLIPBOARD ---
+" Exige um vim com +clipboard (no Arch: pacote gvim, não vim). No WSL2 o
+" WSLg faz a ponte entre a seleção do X11 e o clipboard do Windows.
 set clipboard=unnamedplus     " Integra com clipboard do sistema
+if !has('clipboard')
+    autocmd VimEnter * echohl WarningMsg
+        \ | echom 'vim sem +clipboard: unnamedplus e <leader>y não funcionam (instale gvim)'
+        \ | echohl None
+endif
 
 " ============================================
 "  KEYMAPS
@@ -123,7 +139,6 @@ Plug 'tpope/vim-surround'           " Manipular aspas, parênteses, tags
 Plug 'tpope/vim-commentary'         " Comentar com gc
 Plug 'airblade/vim-gitgutter'       " Indicadores de git na coluna
 Plug 'christoomey/vim-tmux-navigator' " C-h/j/k/l entre panes do vim e do tmux
-Plug 'sharkdp/fd'                   " Busca de arquivos rápida
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'             " Fuzzy finder
 
@@ -133,7 +148,7 @@ Plug 'dracula/vim', {'as': 'dracula'}
 
 call plug#end()
 
-colorscheme dracula
+"colorscheme dracula
 
 " ============================================
 "  CONFIG DOS PLUGINS
@@ -144,10 +159,36 @@ nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :Rg<CR>
 nnoremap <leader>fb :Buffers<CR>
 
+" lightline — tema neutro, não depende de nenhum colorscheme instalado
+let g:lightline = { 'colorscheme': 'wombat' }
+
+" vim-lsp — mapas locais ao buffer, ativados só quando há servidor conectado
+func! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    if exists('+tagfunc')
+        setlocal tagfunc=lsp#tagfunc
+    endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> K  <plug>(lsp-hover)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> <leader>ca <plug>(lsp-code-action)
+    nmap <buffer> <leader>fm <plug>(lsp-document-format)
+endfunc
+
+augroup lsp_install
+    autocmd!
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_virtual_text_enabled = 0
+
 " Criar diretório de undo se não existir
 if !isdirectory($HOME . '/.vim/undodir')
     call mkdir($HOME . '/.vim/undodir', 'p')
-    endif
-
-
-
+endif
