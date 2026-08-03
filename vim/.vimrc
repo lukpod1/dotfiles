@@ -68,7 +68,9 @@ nnoremap <leader>h :nohlsearch<CR>
 nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 
-" Navegar entre splits com Ctrl+hjkl
+" Navegar entre splits com Ctrl+hjkl.
+" O vim-tmux-navigator sobrescreve estes mapas no plug#end() e estende a
+" navegação para além das bordas do vim, entrando nos panes do tmux.
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -120,6 +122,7 @@ Plug 'tpope/vim-fugitive'           " Git integrado
 Plug 'tpope/vim-surround'           " Manipular aspas, parênteses, tags
 Plug 'tpope/vim-commentary'         " Comentar com gc
 Plug 'airblade/vim-gitgutter'       " Indicadores de git na coluna
+Plug 'christoomey/vim-tmux-navigator' " C-h/j/k/l entre panes do vim e do tmux
 Plug 'sharkdp/fd'                   " Busca de arquivos rápida
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'             " Fuzzy finder
